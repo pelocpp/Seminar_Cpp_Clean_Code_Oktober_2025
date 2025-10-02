@@ -36,6 +36,8 @@ Offene Punkte Liste:
 
 Virtueller Basisklassendestruktor
 
+std::enable_shared_from_this
+
 
 // ===================================
 
@@ -446,6 +448,334 @@ Es scheint Abhängigkeiten zwischen „High-Level”- und „Low-Level”-Modulen zu gebe
 
 „High-Level”-Module sollten nicht von „Low-Level”-Modulen abhängen.
 Beide sollten von Abstraktionen abhängen.
+
+=====================================================================
+
+Design Pattern
+---------------
+
+Adapter Pattern
+
+== Vorstellung (Text, UML)
+== Kurzestmögliche Beispiel: Conceptual Example
+== Real-World Beispiele
+
+-- Daten: XML
+          JSON
+
+
+Umsetzung:  -- Häufig mit Interfaces (Java, C++)
+            --Oder mit anderen Modern C++ Konzepten
+
+
+====================================================
+
+Real Life:
+
+a) Es gibt ein kleines, nicht im Zentrum stehendes Problem:
+
+   Implementiere das schnell ...... da brauche ich nicht unbedingt Interface
+
+b) Es gibt ein gewisses Problem, das möglicherweise in Zukunft öfters in Erscheinung tritt,
+   ggf. auch in kleinen Variantionen 
+
+   ==> schmerzfrei erweiterbar ist
+
+   ==> Eine flexible Lösung anzustreben:
+       i)   Ein Pattern passt wie die "Faust auf das Auge"
+       ii)  Abstrahierung: Interfaces.
+       iii) Realisierende Klassen.
+
+c) Pattern muss man "einwirken lassen"
+
+d) Manche der SOLID Gedanken: Single Responsibility  
+
+// Dependency Inversion: ==> gegen ein Interface programmieren
+
+
+==============================================================
+
+Adapter Pattern
+
+Proxy Pattern
+
+Template Pattern
+
+Wann setze ich das Adapter Pattern ein?
+Wann setze ich das Proxy Pattern ein?
+
+Gemeinsamkeiten: Es geht um Methoden einer Klasse.
+
+Proxy Pattern:
+
+„Real-World” Beispiel: Virtual Proxy – Eager vs. Lazy Proxy
+
+Eager // Gierig
+Lazy  // Faul
+
+== Methode method mit einer Funktionalität.
+
+== method(...);   
+
+         a) Sie tut das, was man erwartet  // DIREKT // SOFORT
+
+ 	 b) Sie bereit das vor,  was man erwartet ... und tut es später ...
+
+Eager: Eigentliche Umsetzung des resourcen-intensiven Problems.
+
+Lazy:  Stellvertretende Umsetzung mit einem zunächst minimalistischen Aufwand
+
+       // On Demand: ==> Aktivieren der Eager-Realisierung.
+
+========================================================================
+
+Template Method Pattern
+ 
+Beispiel:
+
+Tetris:
+
+Die Figuren
+
+== fallen alle runter, bis kein freier Platz mehr ist.
+== kann man drehen
+== kann man nach links und rechts schieben (bis sie anstoßen)
+
+Gemeinsamkeiten
+
+======================
+
+Unterschiede:
+
+Ob links oder rechts Platz zum Verschieben ist, hängt von der Größe der Figur ab.
+
+======================
+
+Template Method Pattern ===> Wir haben es mit einer Schablone einer Methode zu tun.
+
+======================
+
+Observer
+--------
+
+== Objekt (Aktienkurse, Wetterdaten, ...)
+
+== Änderungen von Werten in Objekten
+
+
+== Objekt mit den Werten, für die man sich interessiert:
+
+   Observable, Subject
+
+== Client, der sich für Änderungen interessiert:
+
+   Observer, Client
+
+
+Umsetzung mit klassischen Zeigern: Ohne größere Probleme machbar.
+
+Umsetzung mit Smart Pointer:
+
+Achtung:
+---------
+
+== Ein Subject // Observable:
+
+   Kennt - via attach - Clients
+
+== Observer: Wollen das Subject  beobachten:
+
+   Observer kennt Subject.
+
+==> Zyklus
+
+Würden wir NUR std::shared_ptr verwenden, gehen die Objekte nicht aus dem Speicher.
+
+Lösungsansatz:
+
+Subject // Observable  ==> std::shared_ptr
+Observer:              ==> std::shared_ptr
+
+ABER:
+
+Im Subject:            std::list<std::XXX<IObserver>> m_observers;   // IObserver  <===  Observer (std::shared_ptr)
+
+
+FRAGE:   Will das SUBJECT zu einem "Besitzer / Owner" eines Clients werden:  std::XXX ==> std::weak
+
+Konsequenz:  std::weak  ==> lock  ==> std::shared_ptr: Okay, update geht
+                                  ==> nullptr / Empty: Auch Okay, Subject ignoriert diesen Fall.
+
+
+
+Vorsicht:
+
+m_observers.remove (std::weak_ptr);
+
+Hmmm, es gibt für die Klasse std::weak_ptr KEINEN OPERATOR == 
+
+
+Bemerkung:
+Manche Sprachen haben das Abhandeln von Ereignisse "on board":
+
+C#:  delegate // events
+
+
+======================
+
+Ein technisches Detail:
+
+Was ist shared_from_this ???
+
+            // Wie bekomme ich einen std::shared_ptr von mir selbst // this ???
+
+            std::shared_ptr<Observer> me{ shared_from_this() };
+
+
+A) Muss eine Spezialmethode erben:
+
+class Observer : public IObserver, public std::enable_shared_from_this<Observer> 
+
+B) Bekomme dadurch:
+
+   std::shared_ptr<Observer> me{ shared_from_this() };
+
+
+Beobachtung: Kurioses Pattern:  CRTP
+
+Wird bei Bibliotheken verwendet, die Polymorphie PERFORMANT (Statisch) umsetzen wollen.
+
+==================================================================
+
+Fabriken:
+
+Erzeugen Objekte
+
+Why ????
+
+Objekte erzeugen: Konstruktor
+
+Funktionalität: Schnittstellen 
+
+===================================================
+
+    class IShape
+    {
+    public:
+        virtual ~IShape() {}
+
+        virtual void draw() = 0;
+    };
+
+Was hat es mit der Zeile 
+
+        virtual ~IShape() {}
+
+auf sich ???
+
+
+======================================================
+
+
+Prototype Pattern
+
+aka: "Virtueller Konstruktor"
+
+„Erstelle eine Kopie eines Objekts"   ==> Kopier-Konstruktor
+
+Falsche Richtung ..........
+
+Mögliches Szenario:
+
+A) Spiel: Schach
+
+b) ChessFigure* game_board [8][8];
+
+   std::shared_ptr<ChessFigure> game_board [8][8];
+
+
+   Schach: Pawn, Queen, Rook (Tower), ...
+
+           Basisklasse: ChessFigure
+
+
+Im Spiel:  game_board 
+
+Computer wird der nächste Zug berechnet:
+
+Wie: Kopie vom aktuellen Brett:  
+
+ChessFigure* copyBoard = game_board ;   // VORSICHT: Will ich die Zeiger kopieren ???? NEIN
+
+Problem:  ChessFigure* figureCopy =  game_board [0][0] ;
+
+===========================================================
+
+RAII
+----
+
+Reines C++ Pattern.
+
+Resources:
+
+Socket, SqlConnection, Mutex, /* Memory (new/delete) */
+
+Allen Resources:
+
+Open, Attach, ...
+Close, Detach, Release ...
+
+a) Open ... 
+
+b) Was ist, wenn die Freigabe vergessen wird ......
+
+Idee:
+
+i) Klassen / Objekte, Konstrukturen, DESTRUKTOREN:
+
+ii) DESTRUKTOREN ==> Aufruf: deterministisch / am Ende des Blocks (Scope)
+
+iii) Wir verwenden die Resources durch Hüllenobjekten:
+
+Konstrukturs ==> Open
+DESTRUKTOR   ==> Close
+
+Nebenbemerkung:
+
+Resources sind im Regelfall NICHT kopierbar.
+
+SqlConnection conn;
+
+// prevent copy semantics
+RAII(const RAII&) = delete;
+RAII& operator= (const RAII&) = delete;
+
+
+Teile der STL setzen das RAII Idiom ein:
+
+std::mutex:
+
+==> lock
+==> unlock   // Katastrophal, wenn dieser Aufruf NICHT kommt.
+
+Clean Code: Wir verwenden std::mutex NICHT direkt.
+
+Frage:
+
+std::mutex:
+
+Warum steht das lock nicht im Destruktor von std::mutex drin ???
+
+=========================================================
+
+Java, C# kennen kein RAII:
+
+== Konstruktoren
+== (Destruktoren)
+
+=========================================================
+
+
 
 
 

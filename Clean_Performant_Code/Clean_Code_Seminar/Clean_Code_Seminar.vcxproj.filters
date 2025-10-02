@@ -45,5 +45,8 @@
     <ClCompile Include="WeakPtr.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="VirtualBaseClassDestructor.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

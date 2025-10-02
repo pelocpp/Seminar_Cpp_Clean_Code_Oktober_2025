@@ -134,6 +134,7 @@
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="UniformInitialization.cpp" />
     <ClCompile Include="UniquePtr.cpp" />
+    <ClCompile Include="VirtualBaseClassDestructor.cpp" />
     <ClCompile Include="WeakPtr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
