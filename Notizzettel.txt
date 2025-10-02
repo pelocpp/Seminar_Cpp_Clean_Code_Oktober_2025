@@ -775,17 +775,62 @@ Java, C# kennen kein RAII:
 
 =========================================================
 
+Lambda
+
+Type Traits
+
+Visitor
+
+=========================================================
+
+Lambda:
+
+Häufigster Anwendungsfall: Algorithmen der STL
+
+std::sort
+
+std::vector
+
+A) Algorithmen der STL: Mit einer "freien" Funktion
+
+B) Algorithmen der STL: Aufrufbares Objekt 
+
+C) Lambda
+
+======================================
+
+Cpp Insights
+
+Was ist ein Lambda:
+
+Ein Objekt einer anonymen Klasse.
+
+Wir wird die "Methode im Quellcode"  (  [] ... )
+in diese Klasse integriert: Durch  den Aufrufoperator operator()
+
+===================================================
+
+C++:
+
+== Objekt-orientierte Programmiersprache
+== Generische Programmierung (Templates, Typen)
+
+Beispiel:  std::variant
 
 
+Beispiel:
 
+Gameboard:  Mit Zeigern // Vererbung // Basisklasse ChessFigure
 
+std::variant kann Variablen // Objekt unterschiedlichen Typs aufnehmen,
+zu einem Zeitpunkt nur eine Variable.
 
+Type Traits: C++  : Reflection für Arme
 
+Java, C#:  Reflection
 
+C++ 26:  Reflection für Reiche 
 
-
-
-
-
+==========================================================
 
 

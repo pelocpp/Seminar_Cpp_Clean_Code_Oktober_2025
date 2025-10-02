@@ -7,11 +7,13 @@ void test_lifecycle();
 void main_unique_ptr();
 void main_shared_ptr();
 void main_weak_pointer();
-void main_virtual_base_class_destructor();
+void main_virtual_base_class_destructor(); 
+void main_lambdas();
+void main_variant();
 
 int main()
 {
-	main_virtual_base_class_destructor();
+	main_variant();
 	return 1;
 }
 

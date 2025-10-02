@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Auto.cpp" />
+    <ClCompile Include="Lambda.cpp" />
     <ClCompile Include="MoveSemantic.cpp" />
     <ClCompile Include="Pointer_References.cpp" />
     <ClCompile Include="Program.cpp" />
@@ -134,6 +135,7 @@
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="UniformInitialization.cpp" />
     <ClCompile Include="UniquePtr.cpp" />
+    <ClCompile Include="Variant.cpp" />
     <ClCompile Include="VirtualBaseClassDestructor.cpp" />
     <ClCompile Include="WeakPtr.cpp" />
   </ItemGroup>
