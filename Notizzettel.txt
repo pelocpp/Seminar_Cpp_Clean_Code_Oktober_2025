@@ -1,0 +1,461 @@
+// ===================================
+
+Clean Code C++
+
+Trainer: Peter Loos
+
+peter.loos@gmx.de
+
+Mein Background:
+
+C/C++, Java, C#, JavaScript, Mobile Progr.
+
+Weniger: Python
+
+// ===================================
+
+Was ist drin :)
+
+Was ist für mich interessant ?
+
+Was sind meine Erwartungen ???
+
+Was soll es sein ???
+
+Wo sind die Lücken :)
+
+C++ spezifischer Teil
+
+Design Pattern
+
+STL: Specials ...
+
+// ===================================
+
+Offene Punkte Liste:
+
+Virtueller Basisklassendestruktor
+
+
+// ===================================
+
+Initialisierung von Strukturen
+
+Initialisierung von Objekten (kürzer)
+
+Lambda
+
+Nutzung von Smart Pointer Klassen (std::unique_ptr, std::shared_ptr und std::weak_ptr)
+
+std::variant  // Type Traits
+
+// ===================================
+
+Unterlagen:
+
+Github:
+
+https://github.com/pelocpp
+
+https://github.com/pelocpp/cpp_clean_performant_secure
+
+
+// ===================================
+
+C++:
+---
+
+auto:
+
+Python:
+-------
+
+n = 123;
+n = 123.456;
+
+Welchen Typ hat n? Der ermittelt sich dynamisch ...
+
+// ===================================
+
+Pointer:
+
+===============================================
+
+Referenz:
+
+	int& ri = m;    
+
+Definition:
+
+== Eine Referenz kann in C++ zu einem Objekt / Variablen MIT NAMEN
+   gebildet werden.
+
+== Eine Referenz ist ein Alias für ein anderes benanntes Objekt.
+
+===============================================
+
+Vergleich:
+
+Java, C# (Python):
+
+== Referenz-Semantik:
+
+   -- ALLES wird über Referenzen angesprochen
+   -- ALLES liegt am Heap (Halde) // dynamisch angelegt // new
+   -- Ausnahmen: elem. Variablen (int, double, ...) // Stack
+
+C++:
+
+== Value-Semantik:
+
+   Objekte am Stack
+
+   Hmm, wie werden Objekte am Stack an Unterprogramme weitergereicht.
+
+   a) Als Kopie - Bad.
+   b) Über einen Zeiger: (*) // Ginge // C-Stilistisch
+   c) Durch eine Referenz:   // Optimal 
+
+
+== Referenz-Semantik:
+
+   Objekte am Heap 
+
+   Sind über eine Adresse einfach erreichbar ...
+   Auch können Objekte am Heap durch ihre Adresse einfach
+   an Unterprogramme (Methoden) weitergereicht werden
+
+===============================================
+
+RValue 
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/RValueLValue/RValueLValue.md
+
+C++:
+
+Kritik:  "Überflüssige Kopien"   ==> Performanz
+
+C++ 11:  Rundumschlag: "RValue"
+
+a) Ursprünglich:   Eine Definition einer Referenz: Typ &
+
+         Bindet an alles, was einen NAMEN hat.
+
+b) Ab C++ 11:      Eine zweite, zusätzliche Definition einer Referenz: Typ &&
+
+         Wozu:
+
+                  Bindet an alles, was KEINEN NAMEN hat:
+                  Temp. Objekte // Anonyme Objekte.
+
+
+=============================================================
+
+Move - Semantik:
+----------------
+
+Why:     ==> PERFORMANZ
+
+i)  0x000002a571090070:   Puffer im temporären Objekt // liegt am Stack // wurde freigegeben
+
+ii) 0x000002a571090540: Kopie des Puffers  // liegt im Vektor (Stack)
+
+
+--------------------------------------------------
+
+Mit Move-Semantik:
+
+i) 0x000001ec4ace0620
+
+
+Weiteres:
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/MoveSemantics/MoveSemantics.md
+
+Oder auch
+
+https://github.com/pelocpp/cpp_introduction/blob/master/Cpp_Introduction/Markdown/RuleOfThree.md
+
+===========================================
+
+Wann brauche ich
+
+Copy constructor: X(const X&)
+Copy assignment: X& operator=(const X&)  // Kopier-Konstruktor
+Destructor: ~X()
+
+Frage:
+Wann muss ich den Kopier-Konstruktor realisieren ???
+Overhead ???
+
+Beispiel:
+
+class BigData
+{
+private:
+    // private member data
+    size_t m_size;  // current number of elements
+    int* m_data;    //  ===> new
+    // ...
+}
+
+class Time
+{
+public:
+	int m_hours;
+	int m_minutes;
+	int m_seconds;
+
+    void print();
+};
+
+Time t1;
+
+Time t2;
+
+t1 = t2;  // automatisch
+
+===============================================================
+
+Bemerkung:
+
+"Initialisierung von Strukturen und Objekten"
+
+Das ist in C++ ein Faß ohne Boden .........
+
+Time t { 1, 2, 3};
+
+Time t = { 1, 2, 3};
+
+===============================================================
+
+Brace Initialization
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/BraceInitialization/BraceInitialization.md
+
+int n = 0;
+
+int n{};             // Ab C++ 11
+
+
+int m = 1;
+
+int n{ 1 };          // Ab C++ 11
+
+=========================================================================
+
+new - Operator
+
+Problem:  Zu jedem new muss es EIN delete geben.
+
+
+Smart Pointer Klassen
+---------------------
+
+Vorab:
+
+==> Setzt new ein.
+
+==> Frage: Soll ich diesen Code auf Smart Pointer umstellen ???
+    Nein.
+
+    Habe einfach "Angst", dass danach mehr schief läuft als vorher 
+
+    Never touch a running system.
+
+Eine neues Modul ist zu realisieren // umzusetzen: Go for Smart Pointer.
+
+A) Unique Ptr:
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/UniquePtr/UniquePtr.md
+
+Ein std::unique_ptr Objekt ist eine HÜLLE / WRAPPER um einen gewöhnlichen Zeiger.
+
+Was bedeutet dies: 
+
+Wir haben ein Objekt: und damit Automatismen
+
+Konstruktor:
+Destruktor:   <=== Am Ende des Scopes (Methode/Unterprogramm):
+
+              <=== In diesem wird DELETE aufgerufen !!!!!!!!!!!!!!!!!!!!!
+
+
+std::unique_ptr: Exklusiver Besitz
+
+Wie kann ein std::unique_ptr Objekt von Methode zu Methode weitergereicht werden ???
+
+==============================================================
+
+Effekt:
+
+Copy-Move Elision:  to elide // elision:  auslassen / weglassen
+
+==============================================================
+
+Shared Pointer:
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/SharedPtr/SharedPtr.md
+
+==============================================================
+
+C++:      new + delete
+
+-------
+
+Java, C#: new // Garbagge Collector // Müllsammler
+
+a) Viele Objekte können mit new erzeugt werden.
+b) Es gibt KEIN explizites delete
+c) Es wird hinter den Kulissen die Anzahl der Referenzen, die gülig sind, gezählt.
+d) Fällt der Zähler von 1 auf 0, wird (ggf. zu einem späteren Zeitpunkt) hinter den Kulissen delete aufgerufen.
+
+Pro / Contra:
+
+Pro: Das ist einfacher im Handling.
+Contra: In C++ habe ich die volle Kontrolle über den Speicher.
+
+
+=================================================================
+
+Bemerkung:
+
+Ein Shared Ptr funktioniert nicht immer // Boahhhhhhhhhhhhhhhhhhhhhhhhh
+
+Wozu gibt es den Weak Pointer ??????????
+
+https://github.com/pelocpp/cpp_modern/blob/master/GeneralSnippets/WeakPtr/WeakPtr.md
+
+a) Handling
+
+b) Why: ????????????????
+
+
+=================================================================
+
+Zyklus:  Problem erkannt.
+
+Umsetzung / wie sieht es in meiner Anwendung aus ????????
+
+Anwendung:
+
+== Werkzeugmaschinensteuerung.
+
+== Werkzeuge
+
+== Visualisierung
+
+a) Werkzeug:  std::shared_ptr
+ 
+   Besitzer:  Kontrolle über das Werkzeug.
+
+b) Visualisierung: Nehmen wir jetzt einen  std::shared_ptr oder einen  std::weak_ptr ???
+
+   Möchte eine Visualisierung die Rolle als "Besitzer" einnehmen ????
+
+   Nein.
+
+   Aber: Sie soll ein Werkzeug darstellen. 
+
+   std::weak_ptr ===>  lock ===>  std::shared_ptr
+                            ===>  empty
+
+Fazit: std::shared_ptr nur dann verwenden, wenn ich einen "Besitz" erkennen kann.
+
+       In allen anderen Fällen: std::weak_ptr.
+
+Observer Pattern.
+
+
+
+Vermutung: Viel SW mit vielen  std::shared_ptr - Objekten.
+
+           // 3, 2, 1, 0 ==> Um Objekt wieder freizugeben.
+
+// ============================================================
+// ============================================================
+
+Einige Design Patterns (Entwurfsmuster) und Idiome
+
+https://github.com/pelocpp/cpp_design_patterns
+
+===============================================================
+
+Abstrakte Klassen und Schnittstellen
+
+Was ist ein Interface?
+----------------------
+
+Eine Schnittstelle (Interface) besitzt keine Implementierung von Methoden, sie besteht ausschließlich aus Methodendeklarationen. Natürlich benötigt es Klassen, die eine Schnittstelle implementieren, was wiederum bedeutet, das die Methoden der Schnittstelle dann eine Realisierung erhalten.
+
+
+Manko:
+
+C++ kennt kein explizites Schlüsselwort "interface"
+
+Eine Schnittstelle (Interface) ist eine Art "Vertrag"
+
+Art "Absichtserklärung" ==> Wie und in welchen Klassen: Offen // Flexibel.
+
+Abstrakten Klasse:
+------------------
+
+Wording:
+
+Ist eine *unvollständige* Klasse.
+
+A) Implementiert Teile eine Schnittstelle // normalerweise nicht alle.
+
+B) Enthält Daten, die für alle Kindklassen relevant sind.
+
+double m_balance;
+int    m_number;
+double m_credit;   // No Go
+
+=========================================================================
+
+SOLID
+
+Single-Responsibility-Prinzip
+
+==> Monolith: Da fängt man zu kämpfen an ..............
+
+==> Lose Kopplung: Ein Monolith steht für eine enge Kopplung
+
+========================================================================
+
+SW Architektur:
+---------------
+
+==> „High-Level”-Module
+==> „Low-Level”-Module
+
+Wo ist es am bequemsten ????
+
+„Low-Level”-Modul: Wenn was nicht passt, wird geändert.
+
+// Foul
+// Abstimmung
+// Festlegungen
+
+Wer fällt "auf die Schnauze": „High-Level”-Modul
+
+Diskussion:
+Es scheint Abhängigkeiten zwischen „High-Level”- und „Low-Level”-Modulen zu geben.
+
+
+„High-Level”-Module sollten nicht von „Low-Level”-Modulen abhängen.
+Beide sollten von Abstraktionen abhängen.
+
+
+
+
+
+
+
+
+
+
+
+
+
